@@ -1,0 +1,94 @@
+﻿<Window x:Class="WikiUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WikiUI"
+        mc:Ignorable="d"
+        Title="WikiUI" Height="350" Width="525" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <local:DatabindingDebugConverter x:Key="debugConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <DataTemplate x:Key="ChildTemplate">
+            <Border BorderBrush="AliceBlue" BorderThickness="1" CornerRadius="10" >
+                <Expander Header="{Binding Path=Key}" IsTabStop="False" HorizontalAlignment="Left"
+                  IsEnabled="True" ExpandDirection="Down">
+                    <Grid Margin="5,5,5,5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0">Article Title</Label>
+                            <TextBlock Text="{Binding Path=Value.Title}" Grid.Column="1" />
+                        </Grid>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition></ColumnDefinition>
+                                <ColumnDefinition></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0">Article Page Id</Label>
+                            <TextBlock Text="{Binding Path=Value.PageId}" Grid.Column="1" />
+                        </Grid>
+                        <StackPanel Grid.Row="2">
+                            <Label>Total images in the article</Label>
+                            <ListBox ItemsSource="{Binding Value.Images}"></ListBox>
+                        </StackPanel>
+                    </Grid>
+                </Expander>
+            </Border>
+        </DataTemplate>
+
+        <HierarchicalDataTemplate x:Key="ParentTemplate" ItemsSource="{Binding Value}" ItemTemplate="{StaticResource ChildTemplate}">
+            <Border x:Name="ParentTemplateBorder" BorderBrush="AliceBlue" BorderThickness="1" CornerRadius="10">
+                <TextBlock Text="{Binding Path=Key}"></TextBlock>
+            </Border>
+        </HierarchicalDataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="5*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" HorizontalAlignment="Center">Lattitude</Label>
+                    <TextBox Grid.Column="1" Name="Latittude" MaxHeight="30" Text="{Binding Path=Latitude}"></TextBox>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" HorizontalAlignment="Center">Longitude</Label>
+                    <TextBox Grid.Column="1" Name="Longitude" MaxHeight="30" Text="{Binding Path=Longitude}"></TextBox>
+                </Grid>
+            </Grid>
+            <Button Grid.Column="1" Command="{Binding Path=SearchCommand}" MaxHeight="30" MaxWidth="50" HorizontalAlignment="Center">Search</Button>
+        </Grid>
+        <StackPanel Grid.Row="1" CanVerticallyScroll="True">
+            <ProgressBar Height="10" FlowDirection="LeftToRight" IsIndeterminate="True" Visibility="{Binding IsBusy, Converter={StaticResource BooleanToVisibilityConverter}}"></ProgressBar>
+            <TreeView Name="MyTreeView" Margin="0,0,0,0" ItemsSource="{Binding Path=Similarity}" 
+                  ItemTemplate="{StaticResource ParentTemplate}"/>
+        </StackPanel>
+    </Grid>
+</Window>
